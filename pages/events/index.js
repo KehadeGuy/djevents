@@ -1,11 +1,28 @@
 import Layout from "@/components/Layout"
+import { API_URL } from "@/config/index"
+import EventItem from "@/components/EventItem";
 
-function EventsPage() {
+export default function EventsPager(props) {
+  const { events } = props;
   return (
-    <Layout title='Events'>
+    <Layout title="DJ Events | Find the hottest parties">
       <h1>Events</h1>
+      {events.length === 0 && <h3>No events to show</h3>}
+      
+      {events.map((evt) => (
+        <EventItem key={evt.id} evt={evt} />
+      ))}
     </Layout>
   )
 }
 
-export default EventsPage
+export async function getStaticProps() {
+  const res = await fetch(`${API_URL}/api/events`)
+  const events = await res.json()
+  return {
+    props: {
+      events
+    },
+    revalidate: 1
+  }
+}
